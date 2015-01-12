@@ -1,3 +1,9 @@
 ### OOL - TO-DO
-- [ ] Tutto
-- [X] Nulla
+- [ ] define-class
+- [ ] new
+- [ ] get-slot
+- [ ] ool-instance	?
+- [ ] process-method
+- [ ] rewrite-method-code
+- [ ] fdefinition	?
+- [X] ... Maybe more 
