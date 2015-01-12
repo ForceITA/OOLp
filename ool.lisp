@@ -9,7 +9,7 @@
 ;; ADD-CLASS-SPEC aggiunge un elemento alla
 ;; hash-table
 (defun add-class-spec (name class-spec)
-  (setf (gethash name *class-specs*) class-spec))
+  (setf (gethash name *classes-specs*) class-spec))
 
 ;; GET-CLASS-SPEC data una chiave è una hash-table
 ;; restituisce il valore
