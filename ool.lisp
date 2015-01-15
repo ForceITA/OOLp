@@ -32,8 +32,8 @@
   (cond ((null n-list) '())
         ((oddp (length n-list)) (error "Slot-Vaules not balanced."))
         ((not (symbolp (first n-list))) (error "Value not a symbol")) 
-        (t (append (list (cons 
-                          (first n-list) 
+        (t (append (list (cons
+                          (first n-list)
                           (list (second n-list)))) 
                    (create-a-list (cddr n-list))))))
 
@@ -43,7 +43,7 @@
 
 #| STUB FUNCTION - USE TOP |#
 (defun process-method (method-name method-spec)
-  (print method-spec)) 
+  (print method-spec))
 
 ;; DEFINE-CLASS costruisce una classe, associa al nome 
 ;; della classe una "a-list" siffatta 
@@ -56,17 +56,36 @@
                (not (null (get-class-spec parent))))
               (add-class-spec class-name (list (cons "PARENT"  parent) (create-a-list slot-value)))
             (error "Could't find parent"))
-        (error "Parent is not a Symbol"))
+        (error "parent is not a Symbol"))
     (error "Class name is not a Symbol"))
   class-name)
 
 (defun new (class-name &rest slot-value)
   (cond ((null (get-class-spec class-name)) (error "Class don't exist"))
         ((oddp (length slot-value)) (error "Slot-Values not balanced"))
-        ((check-slots-p slot-value) 
+        (t #|(check-slot class-name slot-value)|# 
          (append (list 'ool-instance class-name) (create-a-list slot-value))
-         (error "Slot don't exist in the class"))))
+         #|(error "Slot don't exist in the class")|#)))
 
-#| TO-DO |#
-(defun get-slot (instance slot-name))
+(defun check-slot (class-name slot-value)
+  )
+
+#| instance = (ool-instance <class> (list <k v>*)) |#
+
+(defun get-slot (instance slot-name)
+  (get-slot-class (append 
+                   (list (cons 
+                          'PARENT 
+                          (second instance))) 
+                   (third instance)) slot-name t))
+
+#| NON FUNZIONA |#
+(defun get-slot-class (class slot-name &optional (print-method nil))
+  (let ((key-value (assoc slot-name (cdr class))))
+    (cond ((and key-value print-method) key-value)
+          ((and key-value (eql (cdar key-value) 'METHOD)) (error "Cannot override a method in an instance"))  
+          ((null (cdr class))
+           (error "Could not find slot"))
+          (t (get-slot-class (get-class-spec (cdar class)) slot-name)))))
+
 ;;;; End of file ool.lisp
