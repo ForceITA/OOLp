@@ -21,7 +21,7 @@
  (defun process-slot-value (list)
    (if (oddp (length list)) (error "Slot-Values not balanced, expected even found odd"))
    (cond ((null list) ()) 
-         (t (if (and (listp (second list)) 
+        (t (if (and (listp (second list)) 
                     (eql (first (second list)) 'METHOD)) 
                (process-method (first list) (second list)))
            (append (list (cons (first list) (list(second list)))) 
@@ -54,7 +54,7 @@
           (if (or
                (null parent)
                (not (null (get-class-spec parent))))
-              (add-class-spec class-name (list (cons 'PARENT  parent) (create-a-list slot-value)))
+              (add-class-spec class-name (list (cons "PARENT"  parent) (create-a-list slot-value)))
             (error "Could't find parent"))
         (error "parent is not a Symbol"))
     (error "Class name is not a Symbol"))
@@ -71,44 +71,15 @@
   )
 
 #| instance = (ool-instance <class> (list <k v>*)) |#
-#| ((PARENT <class>) (list <k v>*)) |#
+
 (defun get-slot (instance slot-name)
-  (get-slot-class (append (list (cons 'PARENT 
-                                      (second instance))) 
-                          (rest (rest instance)))
-                  slot-name
-                  t))
+  (get-slot-class (append 
+                   (list (cons 
+                          'PARENT 
+                          (second instance))) 
+                   (third instance)) slot-name t))
 
-
-(defun get-slot-class (class-list slot-name &optional (print-methodp nil))
-  (let ((key-value (assoc slot-name (rest class-list)))
-        (class (cdr (first class-list))))
-    (cond ((and (null key-value)
-                (null class))
-           (error "Unable to find slot"))
-          ((and (null key-value) class)
-           (get-slot-class (get-class-spec class) slot-name))
-          ((and key-value print-methodp) key-value)
-          ((and key-value 
-                print-methodp
-                (listp (second key-value))
-                #|(eql (first (second key-value)) 'METHOD)|#)
-           key-value)
-          (t (error "Unable to find the slot2 ")))))
-
-
-
-
-
-
-
-
-
-
-
-
-
-#|NON FUNZIONA 
+#| NON FUNZIONA |#
 (defun get-slot-class (class slot-name &optional (print-method nil))
   (let ((key-value (assoc slot-name (cdr class))))
     (cond ((and key-value print-method) key-value)
@@ -116,5 +87,5 @@
           ((null (cdr class))
            (error "Could not find slot"))
           (t (get-slot-class (get-class-spec (cdar class)) slot-name)))))
-|#
+
 ;;;; End of file ool.lisp
