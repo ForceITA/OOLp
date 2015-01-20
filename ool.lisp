@@ -71,28 +71,18 @@
   (get-slot-class (append (list (cons 'PARENT 
                                       (second instance))) 
                           (list (rest (rest instance))))
-                  slot-name
-                  t))
+                  slot-name))
 
-(defun get-slot-class (class-list slot-name &optional (print-methodp nil))
-  (let ((key-value (assoc slot-name (cadr class-list)));assegna a key-value la coppia chiave valore se esiste
+(defun get-slot-class (class-list slot-name) 
+  (let ((key-value (assoc slot-name (cadr class-list))) ;assegna a key-value la coppia chiave valore se esiste
         (class (cdr (first class-list))));assegna a class il parent della classe
-    (print class-list)
-    (print key-value)
-    (print class)
     (cond ((and (null key-value)
                 (null class))
            (error "Unable to find slot"))
           ((and (null key-value) class)
            (get-slot-class (get-class-spec class ) 
-                           slot-name));se non esiste la coppia chiave e valore e la classe e' diversa da nil chiama get slot class, passando class, e slot-name senza specificare print method   
-          ((and key-value print-methodp) key-value)
-          ((and key-value 
-                print-methodp
-                (listp (second key-value))
-                (eql (first (second key-value)) 
-                     'METHOD))
-           key-value))))
+                           slot-name));se non esiste la coppia chiave e valore e la classe e' diversa da nil chiama get slot class, passando class, e slot-name senza specificare print method
+          (t key-value))))
 
 
 ;;disordine/spazzatura
@@ -120,11 +110,8 @@
 
 ;(defun check-slot (class-name slot-value)  )
 
-
-
 ;;class-list lista contenente il secondo valore della cons instance 
 ;;slot-name quote contenente la spec da richiamare
-
 
 #|NON FUNZIONA 
 (defun get-slot-class (class slot-name &optional (print-method nil))
