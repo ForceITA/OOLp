@@ -84,12 +84,14 @@
                 (null class))
            (error "Unable to find slot"))
           ((and (null key-value) class)
-           (get-slot-class (get-class-spec class) slot-name))
+           (get-slot-class (get-class-spec class ) 
+                           slot-name));se non esiste la coppia chiave e valore e la classe e' diversa da nil chiama get slot class, passando class, e slot-name senza specificare print method   
           ((and key-value print-methodp) key-value)
           ((and key-value 
                 print-methodp
                 (listp (second key-value))
-                (eql (first (second key-value)) 'METHOD))
+                (eql (first (second key-value)) 
+                     'METHOD))
            key-value))))
 
 
