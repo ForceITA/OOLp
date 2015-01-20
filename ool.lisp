@@ -4,7 +4,6 @@
 ;; Creo una hash-table
 (defparameter *classes-specs* (make-hash-table))
 
-
 #| definizione di una classe|#
 
 ;; GET-CLASS-SPEC data una chiave e una hash-table
@@ -71,13 +70,16 @@
 (defun get-slot (instance slot-name)
   (get-slot-class (append (list (cons 'PARENT 
                                       (second instance))) 
-                          (rest (rest instance)))
+                          (list (rest (rest instance))))
                   slot-name
                   t))
 
 (defun get-slot-class (class-list slot-name &optional (print-methodp nil))
-  (let ((key-value (assoc slot-name (rest class-list)));cosa fa?
-        (class (cdr (first class-list))))
+  (let ((key-value (assoc slot-name (cadr class-list)));assegna a key-value la coppia chiave valore se esiste
+        (class (cdr (first class-list))));assegna a class il parent della classe
+    (print class-list)
+    (print key-value)
+    (print class)
     (cond ((and (null key-value)
                 (null class))
            (error "Unable to find slot"))
@@ -87,9 +89,8 @@
           ((and key-value 
                 print-methodp
                 (listp (second key-value))
-                #|(eql (first (second key-value)) 'METHOD)|#)
-           key-value)
-          (t (error "Unable to find the slot2 ")))))
+                (eql (first (second key-value)) 'METHOD))
+           key-value))))
 
 
 ;;disordine/spazzatura
@@ -98,15 +99,15 @@
 ;; "a-list" e in caso di metodi chiama la costruzione
 ;; del metodo
 #|
- (defun process-slot-value (list)
-   (if (oddp (length list)) (error "Slot-Values not balanced, expected even found odd"))
-   (cond ((null list) ()) 
+   (defun process-slot-value (list)
+     (if (oddp (length list)) (error "Slot-Values not balanced, expected even found odd"))
+     (cond ((null list) ()) 
          (t (if (and (listp (second list)) 
-                    (eql (first (second list)) 'METHOD)) 
-               (process-method (first list) (second list)))
+                     (eql (first (second list)) 'METHOD)) 
+                (process-method (first list) (second list)))
            (append (list (cons (first list) (list(second list)))) 
                    (process-slot-value (rest (rest list))))))) 
-|#
+   |#
 
 #| (defun process-method (method-name method-spec)
      #| TO-DO Miracle |#
