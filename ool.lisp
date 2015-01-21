@@ -40,10 +40,9 @@
                (not (null (get-class-spec parent)))))
          (error "Could't find parent"))
         (t (add-class-spec class-name 
-                           (list (cons 'PARENT  
-                                       parent) 
-                                 (create-a-list 
-                                  slot-value)))))
+                           (list (cons 'PARENT parent) 
+                                 (create-a-list slot-value)))
+           (build-methods slot-value)))
   class-name)
 
 
@@ -101,8 +100,17 @@
   (setf (fdefinition method-name) 
         (lambda (this &rest args)
           (apply (get-slot this method-name)
-                 (append (list this)
-                         args))))
+                 (append (list this) args))))
   (eval (rewrite-method method-spec)))
+
+(defun build-methods (slot-value)
+  (print slot-value)
+  (cond ((null slot-value))
+        ((and (= 2 (length slot-value)) 
+              (listp (second slot-value))
+              (eql (first (second slot-value)) 'METHOD))
+         (method-process (first slot-value) (second slot-value)))
+        (t (build-methods (cddr slot-value)))))
+              
 
 ;;;; End of file ool.lisp
