@@ -91,4 +91,18 @@
                            slot-name));se non esiste la coppia chiave e valore e la classe e' diversa da nil chiama get slot class, passando class, e slot-name senza specificare print method
           (key-value key-value))))
 
+
+(defun rewrite-method (method-spec)
+  (list 'lambda (append (list 'this)  
+                        (second method-spec))
+        (cons 'progn (rest (rest method-spec)))))
+
+(defun method-process (method-name method-spec)
+  (setf (fdefinition method-name) 
+        (lambda (this &rest args)
+          (apply (get-slot this method-name)
+                 (append (list this)
+                         args))))
+  (eval (rewrite-method method-spec)))
+
 ;;;; End of file ool.lisp
