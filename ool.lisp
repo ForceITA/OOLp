@@ -17,15 +17,19 @@
   (setf (gethash name *classes-specs*) class-spec))
 
 ;;crea una lista di coppie di valori
-(defun create-a-list (n-list)
+(defun create-a-list (n-list &optional (build nil))
   (cond ((null n-list) '())
         ((oddp (length n-list)) (error "Slot-Vaules not balanced."))
         ((not (symbolp (first n-list))) (error "Value not a symbol")) 
         #|Fine controlli|#
+        ((and build (listp (second n-list)) (eql (first (second n-list)) 'METHOD))
+         (append (list (cons (first n-list) 
+                             (list (method-process (first n-list) (second n-list)))))
+                 (create-a-list (cddr n-list) build)))
         (t (append (list (cons
                           (first n-list)
                           (list (second n-list)))) 
-                   (create-a-list (cddr n-list))))))
+                   (create-a-list (cddr n-list) build)))))
 
 ;; DEFINE-CLASS costruisce una classe, associa al nome 
 ;; della classe una "a-list" siffatta 
@@ -41,14 +45,11 @@
          (error "Could't find parent"))
         (t (add-class-spec class-name 
                            (list (cons 'PARENT parent) 
-                                 (create-a-list slot-value)))
-           (build-methods slot-value)))
+                                 (create-a-list slot-value t)))))
   class-name)
 
 
 #|Instanza di una classe|#
-
-
 (defun new (class-name &rest slot-value)
   (cond ((null (get-class-spec class-name)) 
          (error "Class don't exist"))
@@ -77,6 +78,7 @@
                     (error "Unable to override a method"))))
          t)
         (t (check-slot class (cddr slot-value))))) 
+ 
 
 ;; GET-slot estrae il valore di un campo da un classe
 (defun get-slot-class (class-list slot-name) 
@@ -90,7 +92,6 @@
                            slot-name));se non esiste la coppia chiave e valore e la classe e' diversa da nil chiama get slot class, passando class, e slot-name senza specificare print method
           (key-value key-value))))
 
-
 (defun rewrite-method (method-spec)
   (list 'lambda (append (list 'this)  
                         (second method-spec))
@@ -102,15 +103,5 @@
           (apply (get-slot this method-name)
                  (append (list this) args))))
   (eval (rewrite-method method-spec)))
-
-(defun build-methods (slot-value)
-  (print slot-value)
-  (cond ((null slot-value))
-        ((and (= 2 (length slot-value)) 
-              (listp (second slot-value))
-              (eql (first (second slot-value)) 'METHOD))
-         (method-process (first slot-value) (second slot-value)))
-        (t (build-methods (cddr slot-value)))))
-              
 
 ;;;; End of file ool.lisp
