@@ -17,18 +17,18 @@
   (setf (gethash name *classes-specs*) class-spec))
 
 ;;crea una lista di coppie di valori
-(defun create-a-list (n-list &optional (build nil))
+(defun create-a-list (n-list)
   (cond ((null n-list) '())
         ((oddp (length n-list)) (error "Slot-Vaules not balanced."))
         ((not (symbolp (first n-list))) (error "Value not a symbol")) 
         ;; Fine controlli
-        ((and build (listp (second n-list)) (eql (first (second n-list)) 'METHOD))
+        ((and (listp (second n-list)) (eql (first (second n-list)) 'METHOD))
          (append (list (cons (first n-list) 
                              (list (process-method (first n-list) (second n-list)))))
-                 (create-a-list (cddr n-list) build)))
+                 (create-a-list (cddr n-list))))
         (t (append (list (cons (first n-list)
                                (list (second n-list)))) 
-                   (create-a-list (cddr n-list) build)))))
+                   (create-a-list (cddr n-list))))))
 
 ;; DEFINE-CLASS costruisce una classe, associa al nome 
 ;; della classe una "a-list" siffatta 
@@ -43,9 +43,8 @@
          (error "Could't find parent"))
         (t (add-class-spec class-name 
                            (list (cons 'PARENT parent) 
-                                 (create-a-list slot-value t)))))
+                                 (create-a-list slot-value)))))
   class-name)
-
 
 #|Instanza di una classe|#
 (defun new (class-name &rest slot-value)
@@ -57,7 +56,7 @@
 
 ;; GET-SLOT estrae il valore di un campo da un istanza
 (defun get-slot (instance slot-name)
-  (second (get-slot-class (append (list (cons 'PARENT 
+  (second (get-slot-class (append (list (cons 'PARENT
                                               (second instance))) 
                                   (list (rest (rest instance))))
                           slot-name)))
@@ -65,8 +64,8 @@
 (defun check-slot (class slot-value) 
   (cond ((null slot-value) t)
         ((and (= 2 (length slot-value))
-              (let ((key-value (get-slot-class 
-                                (list (cons 'PARENT class)) 
+              (let ((key-value (get-slot-class
+                                (list (cons 'PARENT class))
                                 (first slot-value))))
                 (if (functionp (second key-value))
                     (error "Unable to override a method"))))
@@ -80,10 +79,10 @@
         (parent (cdr (first class-list))));; Assegna a class il parent della classe
     (cond ((and (null key-value)
                 (null parent))
-           (error "Unable to find slot"));; La chiave non esiste e non ha parent
+           (error "Unable to find slot"));; La chiave non esiste
           ((and (null key-value) parent)
            (get-slot-class (get-class-spec parent) 
-                           slot-name))
+                           slot-name))(NAME "eve")
           ;; Se non esiste la coppia chiave e valore e la classe
           ;; e' diversa da nil chiama get slot class, passando class, 
           ;; e slot-name senza specificare print method
