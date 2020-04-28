@@ -1,17 +1,21 @@
-;;;; Sas Cezar Angelo 781563
-;;;; Salvagnin Andrea 761857
-;;;; Marana Nicolo 786180
+# OOLp
 
+A object oriented language written in LISP
 
-Nel seguente documento verranno brevemente descritte tutte le funzioni che non sono state esplicitamente richieste nella traccia del
-progetto. In ogni caso le funzioni nel codice sono commentate.
+## Documentation
+The main functions are:
 
-create-a-list:	Data una lista costruisce una associative-list, la funzione richiama
-		la funzione che costruisce i metodi.
+create-a-list:	Creates an associative-list. The function calls another one to build the methods.
 
-check-slot:	Data una classe e una list di slot-value verifica che ogni slot esiste
-		nella classe e nei parent, utilizza get-slot-class.
+check-slot:	Given a class object, and a list of slot-value elements, check that all the slots exists in the class. It uses get-slot-class.
 
-get-slot-class:	Data una classe e il nome di uno slot ricerca lo slot nella classe, se
-		non esiste nella classe cerca nel parent della classe, finche non trova
-		lo slot o il parent è nil.
+get-slot-class:	Given the name of a class, and the name of the slot it checks that the slot exists in the class. If the slot dosn't exists, the function recursively check the parent, until it finds it or the parent is nil
+
+Check the code for all the functions and their documentation.
+
+## Contributors
+
+Work done with:
+* Sas Cezar Angelo - UniMiB ID 781563
+* Salvagnin Andrea - UniMiB ID 761857
+* Marana Nicolo -UniMiB ID 786180
